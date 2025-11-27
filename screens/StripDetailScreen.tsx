@@ -1,0 +1,65 @@
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { getStripById, deleteStrip } from '../services/db';
+import { Strip } from '../types';
+import { Icons } from '../components/Icon';
+
+export const StripDetailScreen: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const [strip, setStrip] = useState<Strip | null>(null);
+
+  useEffect(() => {
+    if (id) {
+      getStripById(id).then(setStrip);
+    }
+  }, [id]);
+
+  const handleDownload = () => {
+    if (!strip) return;
+    const link = document.createElement('a');
+    link.href = strip.dataUrl;
+    link.download = `photobooth-${strip.createdAt}.jpg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleDelete = async () => {
+    if (!strip || !window.confirm('Delete this photo?')) return;
+    await deleteStrip(strip.id);
+    navigate('/gallery');
+  };
+
+  if (!strip) return <div className="h-full flex items-center justify-center text-gray-300 text-xs font-bold">LOADING...</div>;
+
+  return (
+    <div className="h-full w-full max-w-md mx-auto flex flex-col bg-stone-50 relative shadow-2xl">
+      <div className="absolute inset-0 bg-noise opacity-50 pointer-events-none"></div>
+
+      {/* Nav */}
+      <div className="p-6 pt-10 flex justify-between items-center z-20">
+        <button onClick={() => navigate('/gallery')} className="p-2 bg-white border border-gray-200 rounded-full text-gray-600 hover:scale-105 transition shadow-sm">
+          <Icons.Back size={18} />
+        </button>
+        <div className="flex gap-3">
+           <button onClick={handleDownload} className="p-2 bg-white border border-gray-200 rounded-full text-gray-600 hover:scale-105 transition shadow-sm">
+             <Icons.Download size={18} />
+           </button>
+           <button onClick={handleDelete} className="p-2 bg-white border border-gray-200 rounded-full text-red-400 hover:scale-105 transition shadow-sm">
+             <Icons.Trash size={18} />
+           </button>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 overflow-auto flex items-center justify-center p-8 z-10 pb-20">
+           <img 
+             src={strip.dataUrl} 
+             alt="Full Strip" 
+             className="max-w-full h-auto max-h-full rounded-sm shadow-2xl"
+           />
+      </div>
+    </div>
+  );
+};

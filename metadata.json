@@ -1,0 +1,7 @@
+{
+  "name": "Our Photobooth",
+  "description": "A cute, lightweight photobooth app for couples to capture memories together.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
