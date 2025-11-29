@@ -262,7 +262,13 @@ export const BoothScreen: React.FC = () => {
       frame: activeFrame,
       sticker: activeSticker,
     };
-    await saveStrip(strip);
+    
+    // Save to blob storage in the background (don't await to keep print working)
+    // The base64 URL in finalStripUrl will be used for immediate display/printing
+    saveStrip(strip).catch(error => {
+      console.error('Failed to save strip to blob storage:', error);
+      // Don't block the user experience if blob upload fails
+    });
 
     setTimeout(() => {
       setIsPrinting(true);
