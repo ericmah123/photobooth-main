@@ -530,11 +530,11 @@ export const BoothScreen: React.FC = () => {
                    </div>
                 </div>
 
-                <div className="absolute -top-6 -right-4 md:-top-10 md:-right-8 w-20 h-20 md:w-24 md:h-24 pointer-events-none rotate-12 z-50 filter drop-shadow-lg">
+                <div className="absolute -top-8 -right-6 md:-top-10 md:-right-8 w-20 h-20 md:w-32 md:h-32 pointer-events-none rotate-12 z-50 filter drop-shadow-lg">
                     <img src={bowImage} alt="bow" className="w-full h-full" />
                 </div>
                 
-                <div className="absolute -bottom-4 -left-4 md:-bottom-8 md:-left-8 w-20 h-20 md:w-24 md:h-24 pointer-events-none -rotate-12 z-50 filter drop-shadow-lg">
+                <div className="absolute -bottom-6 -left-6 md:-bottom-8 md:-left-8 w-20 h-20 md:w-32 md:h-32 pointer-events-none -rotate-12 z-50 filter drop-shadow-lg">
                     <img src={bowImage} alt="bow" className="w-full h-full" />
                 </div>
 
