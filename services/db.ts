@@ -30,6 +30,7 @@ export const initDB = (): Promise<IDBDatabase> => {
  * Saves a strip to IndexedDB after uploading the image to Vercel Blob
  * If dataUrl is a base64 string, it will be uploaded to Vercel Blob first
  * If dataUrl is already a blob URL, it will be saved directly
+ * If blob upload fails, it will still save the base64 URL to IndexedDB
  */
 export const saveStrip = async (strip: Strip): Promise<void> => {
   let finalStrip = strip;
@@ -43,6 +44,8 @@ export const saveStrip = async (strip: Strip): Promise<void> => {
         `photobooth-${strip.id}.jpg`
       );
       
+      console.log('Successfully uploaded to Vercel Blob:', blobUrl);
+      
       // Replace dataUrl with blob URL
       finalStrip = {
         ...strip,
@@ -50,18 +53,23 @@ export const saveStrip = async (strip: Strip): Promise<void> => {
       };
     } catch (error) {
       console.error('Failed to upload to Vercel Blob:', error);
-      throw new Error('Failed to upload image to storage');
+      console.warn('Saving with base64 URL instead. Make sure VITE_BLOB_READ_WRITE_TOKEN is set in your .env file.');
+      // Continue with base64 URL if blob upload fails
+      // This ensures the photo is still saved even if blob storage isn't configured
     }
   }
   
-  // Save to IndexedDB
+  // Save to IndexedDB (always save, even if blob upload failed)
   const db = await initDB();
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(STORE_NAME, 'readwrite');
     const store = transaction.objectStore(STORE_NAME);
     const request = store.put(finalStrip);
 
-    request.onsuccess = () => resolve();
+    request.onsuccess = () => {
+      console.log('Strip saved to IndexedDB:', finalStrip.id);
+      resolve();
+    };
     request.onerror = () => reject(request.error);
   });
 };

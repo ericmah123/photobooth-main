@@ -34,20 +34,33 @@ export const uploadToBlob = async (
   const token = import.meta.env.VITE_BLOB_READ_WRITE_TOKEN;
   
   if (!token) {
-    throw new Error(
-      'VITE_BLOB_READ_WRITE_TOKEN is not set. Please add it to your .env file. ' +
-      'See BLOB_SETUP.md for instructions.'
-    );
+    const errorMsg = 'VITE_BLOB_READ_WRITE_TOKEN is not set. Please add it to your .env file. See BLOB_SETUP.md for instructions.';
+    console.error(errorMsg);
+    console.error('Current env vars:', Object.keys(import.meta.env).filter(k => k.includes('BLOB')));
+    throw new Error(errorMsg);
   }
   
-  // Upload to Vercel Blob
-  const { url } = await put(finalFilename, blob, {
-    access: 'public',
-    contentType: 'image/jpeg',
-    token: token,
-  });
+  console.log('Uploading to Vercel Blob:', finalFilename, 'Size:', blob.size, 'bytes');
   
-  return url;
+  try {
+    // Upload to Vercel Blob
+    const { url } = await put(finalFilename, blob, {
+      access: 'public',
+      contentType: 'image/jpeg',
+      token: token,
+    });
+    
+    console.log('Successfully uploaded to Vercel Blob:', url);
+    return url;
+  } catch (error: any) {
+    console.error('Vercel Blob upload error:', error);
+    console.error('Error details:', {
+      message: error?.message,
+      status: error?.status,
+      statusText: error?.statusText,
+    });
+    throw error;
+  }
 };
 
 /**

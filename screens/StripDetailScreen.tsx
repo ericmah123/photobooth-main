@@ -48,8 +48,13 @@ export const StripDetailScreen: React.FC = () => {
 
   const handleDelete = async () => {
     if (!strip || !window.confirm('Delete this photo?')) return;
-    await deleteStrip(strip.id);
-    navigate('/gallery');
+    try {
+      await deleteStrip(strip.id);
+      navigate('/gallery');
+    } catch (error) {
+      console.error('Failed to delete strip:', error);
+      alert('Failed to delete photo');
+    }
   };
 
   if (!strip) return <div className="h-full flex items-center justify-center text-gray-300 text-xs font-bold">LOADING...</div>;

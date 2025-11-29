@@ -263,11 +263,14 @@ export const BoothScreen: React.FC = () => {
       sticker: activeSticker,
     };
     
-    // Save to blob storage in the background (don't await to keep print working)
-    // The base64 URL in finalStripUrl will be used for immediate display/printing
-    saveStrip(strip).catch(error => {
-      console.error('Failed to save strip to blob storage:', error);
-      // Don't block the user experience if blob upload fails
+    // Save to storage (blob + IndexedDB)
+    // This will upload to Vercel Blob if token is set, otherwise saves base64
+    // Don't await to keep print animation smooth, but ensure it completes
+    saveStrip(strip).then(() => {
+      console.log('Strip saved successfully');
+    }).catch(error => {
+      console.error('Failed to save strip:', error);
+      // Still show the print even if save fails
     });
 
     setTimeout(() => {
@@ -527,11 +530,11 @@ export const BoothScreen: React.FC = () => {
                    </div>
                 </div>
 
-                <div className="absolute -top-10 -right-8 w-24 h-24 pointer-events-none rotate-12 z-50 filter drop-shadow-lg">
+                <div className="absolute -top-6 -right-4 md:-top-10 md:-right-8 w-20 h-20 md:w-24 md:h-24 pointer-events-none rotate-12 z-50 filter drop-shadow-lg">
                     <img src={bowImage} alt="bow" className="w-full h-full" />
                 </div>
                 
-                <div className="absolute -bottom-8 -left-8 w-24 h-24 pointer-events-none -rotate-12 z-50 filter drop-shadow-lg">
+                <div className="absolute -bottom-4 -left-4 md:-bottom-8 md:-left-8 w-20 h-20 md:w-24 md:h-24 pointer-events-none -rotate-12 z-50 filter drop-shadow-lg">
                     <img src={bowImage} alt="bow" className="w-full h-full" />
                 </div>
 

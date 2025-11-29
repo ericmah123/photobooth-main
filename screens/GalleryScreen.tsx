@@ -2,24 +2,27 @@ import React, { useEffect, useState } from 'react';
 import { getStrips } from '../services/db';
 import { Strip } from '../types';
 import { Icons } from '../components/Icon';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export const GalleryScreen: React.FC = () => {
   const [strips, setStrips] = useState<Strip[]>([]);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    loadStrips();
-  }, []);
+  const location = useLocation();
 
   const loadStrips = async () => {
     try {
       const data = await getStrips();
       setStrips(data);
+      console.log('Loaded strips from gallery:', data.length);
     } catch (e) {
       console.error("Failed to load gallery", e);
     }
   };
+
+  // Load strips on mount and when location changes (when navigating to gallery)
+  useEffect(() => {
+    loadStrips();
+  }, [location.pathname]);
 
   return (
     <div className="h-full w-full flex flex-col bg-white relative overflow-hidden max-w-md mx-auto border-x border-gray-100">
