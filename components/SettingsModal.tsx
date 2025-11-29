@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useSettings } from '../context/SettingsContext';
 import { Icons } from './Icon';
 
@@ -10,59 +10,12 @@ interface SettingsModalProps {
 export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const { settings, updateSettings } = useSettings();
   const [formData, setFormData] = useState(settings);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (!isOpen) return null;
 
   const handleSave = () => {
     updateSettings(formData);
     onClose();
-  };
-
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const img = new Image();
-      img.onload = () => {
-        // Resize to max 300x300 to save storage space
-        const canvas = document.createElement('canvas');
-        const MAX_SIZE = 300;
-        let width = img.width;
-        let height = img.height;
-
-        if (width > height) {
-          if (width > MAX_SIZE) {
-            height *= MAX_SIZE / width;
-            width = MAX_SIZE;
-          }
-        } else {
-          if (height > MAX_SIZE) {
-            width *= MAX_SIZE / height;
-            height = MAX_SIZE;
-          }
-        }
-
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          ctx.drawImage(img, 0, 0, width, height);
-          const dataUrl = canvas.toDataURL('image/png'); // PNG to preserve transparency if present
-          setFormData(prev => ({ ...prev, customStickerDataUrl: dataUrl }));
-        }
-      };
-      img.src = event.target?.result as string;
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleRemoveSticker = (e: React.MouseEvent) => {
-      e.stopPropagation();
-      setFormData(prev => ({ ...prev, customStickerDataUrl: undefined }));
-      if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   return (
@@ -108,47 +61,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                onChange={(e) => setFormData({...formData, tagline: e.target.value})}
                className="w-full px-3 py-2 bg-gray-50 border-2 border-black rounded-lg text-sm font-bold text-black outline-none focus:bg-yellow-50"
              />
-          </div>
-
-          {/* Custom Sticker Upload */}
-          <div>
-            <label className="block text-[10px] font-bold text-black uppercase mb-1 ml-1">Custom Sticker (JPEG/PNG)</label>
-            <div className="flex items-center gap-3">
-              <div 
-                className="w-12 h-12 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50 overflow-hidden cursor-pointer hover:bg-gray-100 relative group"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                {formData.customStickerDataUrl ? (
-                  <>
-                    <img src={formData.customStickerDataUrl} alt="Sticker" className="w-full h-full object-contain" />
-                    <button 
-                        onClick={handleRemoveSticker}
-                        className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                        <Icons.Trash size={16} className="text-white" />
-                    </button>
-                  </>
-                ) : (
-                  <Icons.Gallery size={20} className="text-gray-400" />
-                )}
-              </div>
-              <div className="flex flex-col items-start">
-                  <button 
-                    onClick={() => fileInputRef.current?.click()}
-                    className="text-xs font-bold text-blue-500 hover:underline"
-                  >
-                    {formData.customStickerDataUrl ? 'Change Image' : 'Upload Image'}
-                  </button>
-                  <span className="text-[9px] text-gray-400">Supports JPG, PNG, WEBP</span>
-              </div>
-              <input 
-                type="file" 
-                ref={fileInputRef} 
-                className="hidden" 
-                accept="image/jpeg, image/png, image/webp" 
-                onChange={handleFileUpload}
-              />
-            </div>
           </div>
           
           <div className="flex items-center justify-between py-2 border-2 border-gray-100 rounded-lg px-2 mt-2">

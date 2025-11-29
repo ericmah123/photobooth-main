@@ -26,7 +26,6 @@ const ASSETS: Record<StickerTheme, string | null> = {
   [StickerTheme.CAT]: CAT_SVG,
   [StickerTheme.FLOWERS]: TULIP_SVG,
   [StickerTheme.BOWS]: BOW_SVG,
-  [StickerTheme.CUSTOM]: null, // Handled dynamically
 };
 
 export const compositeStrip = async (
@@ -119,12 +118,7 @@ export const compositeStrip = async (
 
   // 5. Draw Foreground Decor (Images/Stickers)
   if (sticker !== StickerTheme.NONE) {
-    let assetUrl = ASSETS[sticker];
-    
-    // Use custom sticker if selected and available
-    if (sticker === StickerTheme.CUSTOM && settings.customStickerDataUrl) {
-      assetUrl = settings.customStickerDataUrl;
-    }
+    const assetUrl = ASSETS[sticker];
 
     if (assetUrl) {
       try {

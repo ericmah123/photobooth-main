@@ -28,7 +28,6 @@ const STICKER_PRESETS = [
   { id: StickerTheme.CAT, label: 'Cat' },
   { id: StickerTheme.FLOWERS, label: 'Flowers' },
   { id: StickerTheme.BOWS, label: 'Bows' },
-  { id: StickerTheme.CUSTOM, label: 'Custom' },
 ];
 
 export const CaptureScreen: React.FC = () => {
@@ -228,10 +227,6 @@ export const CaptureScreen: React.FC = () => {
   };
 
   const handleStickerSelect = (sticker: StickerTheme) => {
-    if (sticker === StickerTheme.CUSTOM && !settings.customStickerDataUrl) {
-        alert("Please upload a custom sticker in settings first!");
-        return;
-    }
     setActiveSticker(sticker);
   }
 

@@ -15,14 +15,35 @@ export const StripDetailScreen: React.FC = () => {
     }
   }, [id]);
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!strip) return;
-    const link = document.createElement('a');
-    link.href = strip.dataUrl;
-    link.download = `photobooth-${strip.createdAt}.jpg`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    
+    try {
+      // Fetch the image from blob URL
+      const response = await fetch(strip.dataUrl);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = `photobooth-${strip.createdAt}.jpg`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Clean up the blob URL
+      URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error('Failed to download image:', error);
+      // Fallback: try direct download
+      const link = document.createElement('a');
+      link.href = strip.dataUrl;
+      link.download = `photobooth-${strip.createdAt}.jpg`;
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
 
   const handleDelete = async () => {

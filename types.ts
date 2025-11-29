@@ -20,13 +20,12 @@ export enum StickerTheme {
   CAT = 'cat',     // Mofusand style
   FLOWERS = 'flowers', // Tulips/Lilys
   BOWS = 'bows',   // Coquette
-  CUSTOM = 'custom', // User uploaded
 }
 
 export interface Strip {
   id: string;
   createdAt: number;
-  dataUrl: string; // Base64 of final composite
+  dataUrl: string; // Vercel Blob URL of final composite
   filter: FilterType;
   frame: FrameType;
   sticker: StickerTheme;
@@ -37,5 +36,4 @@ export interface AppSettings {
   name2: string;
   showDate: boolean;
   tagline: string;
-  customStickerDataUrl?: string;
 }

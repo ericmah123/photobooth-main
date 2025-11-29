@@ -49,7 +49,6 @@ const STICKER_LIST = [
     StickerTheme.CAT,
     StickerTheme.FLOWERS,
     StickerTheme.BOWS,
-    StickerTheme.CUSTOM,
 ];
 
 const BG_ELEMENTS = [
@@ -279,12 +278,7 @@ export const BoothScreen: React.FC = () => {
     e.stopPropagation(); 
     setActiveSticker(prev => {
         const nextIndex = (STICKER_LIST.findIndex(s => s === prev) + 1) % STICKER_LIST.length;
-        const next = STICKER_LIST[nextIndex];
-        if (next === StickerTheme.CUSTOM && !settings.customStickerDataUrl) {
-            // Skip custom if no image is uploaded
-            return STICKER_LIST[(nextIndex + 1) % STICKER_LIST.length];
-        }
-        return next;
+        return STICKER_LIST[nextIndex];
     });
   };
 
@@ -527,11 +521,11 @@ export const BoothScreen: React.FC = () => {
                    </div>
                 </div>
 
-                <div className="absolute -top-10 -right-8 w-32 h-32 pointer-events-none rotate-12 z-50 filter drop-shadow-lg">
+                <div className="absolute -top-10 -right-8 w-24 h-24 pointer-events-none rotate-12 z-50 filter drop-shadow-lg">
                     <img src={bowImage} alt="bow" className="w-full h-full" />
                 </div>
                 
-                <div className="absolute -bottom-8 -left-8 w-32 h-32 pointer-events-none -rotate-12 z-50 filter drop-shadow-lg">
+                <div className="absolute -bottom-8 -left-8 w-24 h-24 pointer-events-none -rotate-12 z-50 filter drop-shadow-lg">
                     <img src={bowImage} alt="bow" className="w-full h-full" />
                 </div>
 

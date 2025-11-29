@@ -6,7 +6,6 @@ const DEFAULT_SETTINGS: AppSettings = {
   name2: 'Gwen',
   showDate: true,
   tagline: 'Memories ✨',
-  customStickerDataUrl: undefined,
 };
 
 interface SettingsContextType {

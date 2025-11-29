@@ -1,4 +1,5 @@
 import { Strip } from '../types';
+import { uploadToBlob } from './blob';
 
 const DB_NAME = 'OurPhotoboothDB';
 const STORE_NAME = 'strips';
@@ -25,12 +26,40 @@ export const initDB = (): Promise<IDBDatabase> => {
   });
 };
 
+/**
+ * Saves a strip to IndexedDB after uploading the image to Vercel Blob
+ * If dataUrl is a base64 string, it will be uploaded to Vercel Blob first
+ * If dataUrl is already a blob URL, it will be saved directly
+ */
 export const saveStrip = async (strip: Strip): Promise<void> => {
+  let finalStrip = strip;
+  
+  // Check if dataUrl is a base64 data URL (starts with data:)
+  if (strip.dataUrl.startsWith('data:')) {
+    try {
+      // Upload to Vercel Blob
+      const blobUrl = await uploadToBlob(
+        strip.dataUrl,
+        `photobooth-${strip.id}.jpg`
+      );
+      
+      // Replace dataUrl with blob URL
+      finalStrip = {
+        ...strip,
+        dataUrl: blobUrl,
+      };
+    } catch (error) {
+      console.error('Failed to upload to Vercel Blob:', error);
+      throw new Error('Failed to upload image to storage');
+    }
+  }
+  
+  // Save to IndexedDB
   const db = await initDB();
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(STORE_NAME, 'readwrite');
     const store = transaction.objectStore(STORE_NAME);
-    const request = store.put(strip);
+    const request = store.put(finalStrip);
 
     request.onsuccess = () => resolve();
     request.onerror = () => reject(request.error);
