@@ -6,6 +6,7 @@ import { saveStrip } from '../services/db';
 import { useSettings } from '../context/SettingsContext';
 import { useNavigate } from 'react-router-dom';
 import { SettingsModal } from '../components/SettingsModal';
+import { getRandomSong } from '../utils/music';
 import miffyImage from '../tumblr_7fcd99e292445d6c6779622575f12de7_33b62567_400.png';
 import catImage from '../f5f0a0149d258eb885a7e461cf677064-removebg-preview.png';
 import bowImage from '../vecteezy_pink-bow-cartoon_47834936.png';
@@ -120,6 +121,7 @@ export const BoothScreen: React.FC = () => {
   // Refs
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Options
   const [activeFilter, setActiveFilter] = useState<FilterType>(FilterType.ORIGINAL);
@@ -546,7 +548,24 @@ export const BoothScreen: React.FC = () => {
 
       {!isZoomed && !showSecretMessage && (
           <div 
-              onClick={(e) => { e.stopPropagation(); setShowSecretMessage(true); }}
+              onClick={(e) => { 
+                e.stopPropagation(); 
+                setShowSecretMessage(true);
+                // Play random song when opening secret message
+                try {
+                  const songUrl = getRandomSong();
+                  const audio = new Audio(songUrl);
+                  audio.volume = 0.5; // Set volume to 50%
+                  audio.loop = true; // Loop the song
+                  audio.play().catch(err => {
+                    console.warn('Could not play audio:', err);
+                    // Some browsers require user interaction first
+                  });
+                  audioRef.current = audio;
+                } catch (error) {
+                  console.error('Error loading music:', error);
+                }
+              }}
               className="absolute bottom-2 left-0 w-24 h-24 md:w-32 md:h-32 z-[100] cursor-pointer animate-cat-walk drop-shadow-lg pointer-events-auto"
               title="Click me!"
           >
@@ -561,32 +580,77 @@ export const BoothScreen: React.FC = () => {
 
       {showSecretMessage && (
         <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in duration-300">
-            <div className="bg-[#fff0f5] rounded-3xl p-8 max-w-sm w-full shadow-[8px_8px_0px_#5d4037] border-[4px] border-[#5d4037] relative animate-in zoom-in-95 duration-300 flex flex-col items-center text-center">
+            <div className="bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100 rounded-3xl p-6 md:p-8 max-w-lg w-full shadow-[8px_8px_0px_#ec4899] border-[4px] border-pink-300 relative animate-in zoom-in-95 duration-300 flex flex-col items-center text-center overflow-y-auto max-h-[90vh]">
                 <button 
-                    onClick={() => setShowSecretMessage(false)}
-                    className="absolute top-4 right-4 text-[#5d4037]/50 hover:text-[#5d4037] transition-colors"
+                    onClick={() => {
+                      // Stop music when closing
+                      if (audioRef.current) {
+                        audioRef.current.pause();
+                        audioRef.current.currentTime = 0;
+                        audioRef.current = null;
+                      }
+                      setShowSecretMessage(false);
+                    }}
+                    className="absolute top-4 right-4 text-pink-400 hover:text-pink-600 transition-colors z-10 bg-white/80 rounded-full p-1"
                 >
-                    <Icons.Close size={24} strokeWidth={3} />
+                    <Icons.Close size={20} strokeWidth={3} />
                 </button>
                 
-                <div className="w-32 h-32 animate-bounce mb-4">
+                <div className="w-28 h-28 md:w-32 md:h-32 animate-bounce mb-4">
                     <img src={catImage} alt="Cat" className="w-full h-full object-contain drop-shadow-md" />
                 </div>
                 
-                <h2 className="font-handwriting text-3xl font-bold text-[#5d4037] mb-2">Happy 6 Months! ❤️</h2>
+                <h2 className="font-handwriting text-4xl md:text-5xl font-bold bg-gradient-to-r from-pink-500 via-rose-500 to-pink-600 bg-clip-text text-transparent mb-1 drop-shadow-sm">
+                    Happy 6 Months! ❤️
+                </h2>
+                <div className="flex gap-1 mb-6">
+                    <span className="text-2xl">💕</span>
+                    <span className="text-xl">✨</span>
+                    <span className="text-2xl">💕</span>
+                </div>
                 
-                <div className="bg-white border-[2px] border-[#5d4037] p-4 rounded-xl shadow-inner w-full mb-6">
-                    <p className="font-sans text-[#5d4037] leading-relaxed text-sm">
-                       Write your message here... <br/>
-                       I love you so much and can't wait for many more memories together!
-                    </p>
+                <div className="bg-white/90 backdrop-blur-sm border-[3px] border-pink-200 p-5 md:p-6 rounded-2xl shadow-[inset_0_2px_8px_rgba(236,72,153,0.1)] w-full mb-6 text-left">
+                    <div className="space-y-4">
+                        <p className="font-handwriting text-pink-700 text-base md:text-lg leading-relaxed font-semibold">
+                            Dear Gwen,
+                        </p>
+                        
+                        <p className="font-sans text-pink-800 leading-relaxed text-sm md:text-base">
+                            These past six months with you have been the most <span className="font-bold text-pink-600">rewarding and fulfilling</span> experience of my life. Every moment we have shared has become a memory I treasure, and I am endlessly grateful that I get to call you not only my girlfriend but also my <span className="font-bold text-rose-600">best friend</span> and my <span className="font-bold text-pink-600">forever baby bear</span>.
+                        </p>
+                        
+                        <p className="font-sans text-pink-800 leading-relaxed text-sm md:text-base">
+                            You are the most <span className="font-bold text-rose-600">beautiful, kind, and caring</span> person I have ever known, both inside and out, and I feel so unbelievably lucky to have you in my life.
+                        </p>
+                        
+                        <p className="font-sans text-pink-800 leading-relaxed text-sm md:text-base">
+                            I love you more than words can express, and I cannot wait for all the <span className="font-bold text-pink-600">moments, adventures, laughs, and quiet days</span> we still have ahead of us. Being with you feels like <span className="font-bold text-rose-600">home</span>, and having you as both my partner and my best friend is the greatest gift I could ever ask for.
+                        </p>
+                        
+                        <p className="font-sans text-pink-800 leading-relaxed text-sm md:text-base">
+                            One of my favorite things about us is how much joy we find in <span className="font-bold text-pink-600">photo booths</span> and how those silly snapshots manage to capture both our love and our friendship. Because of that, I wanted to create something special for you: <span className="font-bold text-rose-600">a photo booth that is truly ours</span>. It is a small gesture, but I hope it shows you how deeply I adore you.
+                        </p>
+                        
+                        <p className="font-handwriting text-pink-700 text-lg md:text-xl leading-relaxed font-bold mt-4 text-center">
+                            I love you so much, my love,<br/>
+                            today, tomorrow, and always. 💕
+                        </p>
+                    </div>
                 </div>
                 
                 <button 
-                    onClick={() => setShowSecretMessage(false)}
-                    className="px-8 py-3 bg-[#f43f5e] text-white font-doodle font-bold text-xl rounded-full border-[3px] border-[#5d4037] shadow-[2px_2px_0px_#5d4037] hover:translate-y-px hover:shadow-none hover:bg-[#e11d48] transition-all"
+                    onClick={() => {
+                      // Stop music when closing
+                      if (audioRef.current) {
+                        audioRef.current.pause();
+                        audioRef.current.currentTime = 0;
+                        audioRef.current = null;
+                      }
+                      setShowSecretMessage(false);
+                    }}
+                    className="px-8 py-3 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-doodle font-bold text-lg md:text-xl rounded-full border-[3px] border-pink-600 shadow-[4px_4px_0px_#ec4899] hover:translate-y-px hover:shadow-[2px_2px_0px_#ec4899] hover:from-pink-600 hover:to-rose-600 transition-all transform hover:scale-105 active:scale-95"
                 >
-                    Love you!
+                    💖 Love you! 💖
                 </button>
             </div>
         </div>
