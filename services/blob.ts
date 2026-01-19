@@ -84,13 +84,30 @@ export const deleteFromBlob = async (url: string): Promise<void> => {
 };
 
 /**
- * Lists all blobs in the store
+ * Lists all blobs in the store via API
  */
-export const listBlobs = async (): Promise<ListBlobResult> => {
-  const token = import.meta.env.VITE_BLOB_READ_WRITE_TOKEN;
-  if (!token) throw new Error("Missing Blob Token");
+export const listBlobs = async (): Promise<{ blobs: any[] }> => {
+  // If we are in production (or if the API exists), fetch from the endpoint
+  try {
+    const response = await fetch('/api/gallery');
+    if (!response.ok) {
+      throw new Error(`API Error: ${response.statusText}`);
+    }
+    const blobs = await response.json();
+    return { blobs };
+  } catch (error) {
+    console.warn("Could not fetch from /api/gallery (likely running locally without vercel dev). Falling back to direct SDK call if possible, or failing.");
 
-  return await list({
-    token: token,
-  });
+    // Fallback: If local and token is available, try direct SDK (might fail CORS but worth a shot for local dev if configured)
+    const token = import.meta.env.VITE_BLOB_READ_WRITE_TOKEN;
+    if (token) {
+      try {
+        return await list({ token });
+      } catch (e) {
+        console.warn("Direct SDK fallback failed:", e);
+      }
+    }
+
+    return { blobs: [] };
+  }
 };
