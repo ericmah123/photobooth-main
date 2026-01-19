@@ -455,14 +455,21 @@ export const BoothScreen: React.FC = () => {
 
                           {isZoomed && !isCapturing && (
                             <div className="absolute inset-0 flex flex-col justify-between p-3 z-[9999] pointer-events-none">
-                                <div className="flex justify-between items-center pointer-events-auto px-1 pt-1">
-                                  <button 
-                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleExitBooth(); }} 
-                                    className={`w-9 h-9 bg-red-400 border-[3px] ${THEME.border} rounded-full text-white shadow-[2px_2px_0px_#5d4037] flex items-center justify-center hover:scale-110 transition-transform cursor-pointer z-50`}
-                                  >
-                                    <Icons.Close size={18} strokeWidth={3} />
-                                  </button>
-                                </div>
+                                <div className="flex justify-between items-center pointer-events-auto px-3 pt-3 w-full">
+              <button 
+                onClick={(e) => { e.stopPropagation(); setFacingMode(prev => prev === 'user' ? 'environment' : 'user'); }} 
+                className={`w-9 h-9 bg-white border-[3px] ${THEME.border} rounded-full text-[#5d4037] shadow-[2px_2px_0px_#5d4037] flex items-center justify-center hover:scale-110 transition-transform cursor-pointer z-50`}
+              >
+                <Icons.Retake size={18} strokeWidth={3} />
+              </button>
+
+              <button 
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleExitBooth(); }} 
+                className={`w-9 h-9 bg-red-400 border-[3px] ${THEME.border} rounded-full text-white shadow-[2px_2px_0px_#5d4037] flex items-center justify-center hover:scale-110 transition-transform cursor-pointer z-50`}
+              >
+                <Icons.Close size={18} strokeWidth={3} />
+              </button>
+            </div>
                                 
                                 <div className="flex items-center justify-around pb-2 pointer-events-auto gap-4">
                                   <button onClick={(e) => { e.stopPropagation(); setActiveFrame(prev => FRAME_PRESETS[(FRAME_PRESETS.findIndex(f => f.id === prev) + 1) % FRAME_PRESETS.length].id); }} className={`w-10 h-10 rounded-full bg-yellow-200 border-[3px] ${THEME.border} flex items-center justify-center ${THEME.text} shadow-[2px_2px_0px_#5d4037] active:translate-y-[2px] transition-all cursor-pointer`}>
