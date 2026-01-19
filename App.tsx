@@ -15,6 +15,7 @@ const App: React.FC = () => {
             <Routes>
               <Route path="/" element={<BoothScreen />} />
               <Route path="/gallery" element={<GalleryScreen />} />
+              <Route path="/strip/detail" element={<StripDetailScreen />} />
               <Route path="/strip/:id" element={<StripDetailScreen />} />
             </Routes>
           </div>

@@ -68,18 +68,22 @@ export const uploadToBlob = async (
  * Note: This requires the blob URL or blob path
  */
 export const deleteFromBlob = async (url: string): Promise<void> => {
-  // Extract the blob path from the URL
-  // Vercel Blob URLs are in format: https://[hash].public.blob.vercel-storage.com/[path]
   try {
-    const urlObj = new URL(url);
-    const path = urlObj.pathname.substring(1); // Remove leading slash
+    const response = await fetch('/api/delete', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ url }),
+    });
 
-    // Note: The @vercel/blob package doesn't have a direct delete method in client-side
-    // You may need to create an API route for deletion, or use the Vercel Blob API directly
-    // For now, we'll just log a warning
-    console.warn('Blob deletion not implemented. You may want to create an API route for this.');
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to delete blob');
+    }
   } catch (error) {
     console.error('Error deleting blob:', error);
+    throw error;
   }
 };
 

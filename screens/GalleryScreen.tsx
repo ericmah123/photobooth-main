@@ -63,7 +63,7 @@ export const GalleryScreen: React.FC = () => {
             {strips.map((strip) => (
               <div
                 key={strip.id}
-                onClick={() => window.open(strip.dataUrl, '_blank')}
+                onClick={() => navigate(`/strip/detail`, { state: { strip } })}
                 className="group cursor-pointer"
               >
                 <div className="w-full aspect-[2/5] overflow-hidden rounded-sm bg-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.08)] transition-transform duration-300 hover:-translate-y-1 hover:shadow-lg">
