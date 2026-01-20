@@ -191,6 +191,8 @@ export const BoothScreen: React.FC = () => {
     e.stopPropagation();
     if (hasPrinted) return;
     setIsZoomed(true);
+    // Open settings automatically after zoom so they remember to customize
+    setTimeout(() => setIsSettingsOpen(true), 800);
   };
 
   const handleExitBooth = () => {
@@ -410,9 +412,9 @@ export const BoothScreen: React.FC = () => {
                   </div>
 
                   <div className={`absolute inset-0 pointer-events-none z-10 transition-all duration-300 ${activeFrame === FrameType.POLAROID ? 'border-[16px] border-b-[50px] border-white' :
-                      activeFrame === FrameType.HEARTS ? 'border-[8px] border-rose-400 rounded-[20px]' :
-                        activeFrame === FrameType.RETRO ? 'border-[16px] border-[#fffbe6]' :
-                          activeFrame === FrameType.FILM ? 'border-x-[24px] border-black' : ''
+                    activeFrame === FrameType.HEARTS ? 'border-[8px] border-rose-400 rounded-[20px]' :
+                      activeFrame === FrameType.RETRO ? 'border-[16px] border-[#fffbe6]' :
+                        activeFrame === FrameType.FILM ? 'border-x-[24px] border-black' : ''
                     }`}>
                     {activeFrame === FrameType.FILM && (
                       <div className="w-full h-full flex justify-between">
