@@ -63,26 +63,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
             />
           </div>
 
-          <div>
-            <label className="block text-[10px] font-bold text-black uppercase mb-1 ml-1">Photo Shape</label>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setFormData({ ...formData, orientation: 'landscape' })}
-                className={`flex-1 py-2 px-3 border-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${formData.orientation === 'landscape' ? 'bg-black text-white border-black' : 'bg-white text-black border-gray-200 hover:border-black'}`}
-              >
-                <div className="w-5 h-3.5 border-2 border-current rounded-sm"></div>
-                Wide
-              </button>
-              <button
-                onClick={() => setFormData({ ...formData, orientation: 'portrait' })}
-                className={`flex-1 py-2 px-3 border-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${formData.orientation === 'portrait' ? 'bg-black text-white border-black' : 'bg-white text-black border-gray-200 hover:border-black'}`}
-              >
-                <div className="w-3.5 h-5 border-2 border-current rounded-sm"></div>
-                Tall
-              </button>
-            </div>
-          </div>
-
           <div className="flex items-center justify-between py-2 border-2 border-gray-100 rounded-lg px-2 mt-2">
             <span className="text-sm font-bold text-black font-doodle">DISPLAY DATE</span>
             <button

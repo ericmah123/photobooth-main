@@ -36,5 +36,4 @@ export interface AppSettings {
   name2: string;
   showDate: boolean;
   tagline: string;
-  orientation: 'portrait' | 'landscape';
 }

@@ -4,13 +4,11 @@ import { getStripById } from '../services/db';
 import { deleteFromBlob } from '../services/blob';
 import { Strip } from '../types';
 import { Icons } from '../components/Icon';
-import { useSettings } from '../context/SettingsContext';
 
 export const StripDetailScreen: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
-  const { settings } = useSettings();
   const [strip, setStrip] = useState<Strip | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -84,8 +82,6 @@ export const StripDetailScreen: React.FC = () => {
 
   if (!strip) return <div className="h-full flex items-center justify-center text-gray-300 text-xs font-bold">LOADING...</div>;
 
-  const isWide = settings.orientation === 'landscape';
-
   return (
     <div className="h-full w-full max-w-md mx-auto flex flex-col bg-stone-50 relative shadow-2xl">
       <div className="absolute inset-0 bg-noise opacity-50 pointer-events-none"></div>
@@ -106,11 +102,11 @@ export const StripDetailScreen: React.FC = () => {
       </div>
 
       {/* Content */}
-      <div className={`flex-1 overflow-auto flex items-center justify-center p-8 z-10 pb-20 ${isWide ? 'overflow-x-auto overflow-y-hidden' : ''}`}>
+      <div className="flex-1 overflow-auto flex items-center justify-center p-8 z-10 pb-20">
         <img
           src={strip.dataUrl}
           alt="Full Strip"
-          className={`max-w-full h-auto rounded-sm shadow-2xl transition-transform duration-500 ${isWide ? 'rotate-90 scale-[1.3] my-10' : 'max-h-full'}`}
+          className="max-w-full h-auto max-h-full rounded-sm shadow-2xl"
         />
       </div>
     </div>

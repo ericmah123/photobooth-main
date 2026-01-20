@@ -41,20 +41,8 @@ export const compositeStrip = async (
   if (!ctx) throw new Error('Could not get canvas context');
 
   // 1. Determine Canvas Size based on Frame
-  const isPortrait = settings.orientation === 'portrait';
-
-  // Base dimensions (Landscape default)
-  let pWidth = PHOTO_WIDTH;
-  let pHeight = PHOTO_HEIGHT;
-
-  // Swap for portrait
-  if (isPortrait) {
-    pWidth = PHOTO_HEIGHT; // 450
-    pHeight = PHOTO_WIDTH; // 600
-  }
-
-  let canvasWidth = pWidth + PADDING * 2;
-  let canvasHeight = PADDING + (pHeight * 4) + (GAP * 3) + PADDING + 120;
+  let canvasWidth = PHOTO_WIDTH + PADDING * 2;
+  let canvasHeight = PADDING + (PHOTO_HEIGHT * 4) + (GAP * 3) + PADDING + 120;
 
   if (frame === FrameType.POLAROID) {
     canvasHeight += 100;

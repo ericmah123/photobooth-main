@@ -6,7 +6,6 @@ const DEFAULT_SETTINGS: AppSettings = {
   name2: 'Gwen',
   showDate: true,
   tagline: 'Memories ✨',
-  orientation: 'portrait',
 };
 
 interface SettingsContextType {
