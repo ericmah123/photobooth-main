@@ -21,7 +21,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/20 backdrop-blur-[2px] p-6 animate-in fade-in duration-200">
       <div className="bg-white w-full max-w-xs rounded-2xl shadow-[8px_8px_0px_rgba(0,0,0,1)] p-6 animate-in zoom-in-95 duration-200 relative overflow-hidden border-[3px] border-black">
-        
+
         <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-black transition-colors">
           <Icons.Close size={20} strokeWidth={3} />
         </button>
@@ -34,39 +34,59 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
         <div className="space-y-4">
           <div className="flex gap-2">
             <div className="flex-1">
-                <label className="block text-[10px] font-bold text-black uppercase mb-1 ml-1">You</label>
-                <input
-                  type="text"
-                  value={formData.name1}
-                  onChange={(e) => setFormData({...formData, name1: e.target.value})}
-                  className="w-full px-3 py-2 bg-gray-50 border-2 border-black rounded-lg text-sm font-bold text-black outline-none focus:bg-yellow-50"
-                />
+              <label className="block text-[10px] font-bold text-black uppercase mb-1 ml-1">You</label>
+              <input
+                type="text"
+                value={formData.name1}
+                onChange={(e) => setFormData({ ...formData, name1: e.target.value })}
+                className="w-full px-3 py-2 bg-gray-50 border-2 border-black rounded-lg text-sm font-bold text-black outline-none focus:bg-yellow-50"
+              />
             </div>
             <div className="flex-1">
-                <label className="block text-[10px] font-bold text-black uppercase mb-1 ml-1">Partner</label>
-                <input
-                  type="text"
-                  value={formData.name2}
-                  onChange={(e) => setFormData({...formData, name2: e.target.value})}
-                  className="w-full px-3 py-2 bg-gray-50 border-2 border-black rounded-lg text-sm font-bold text-black outline-none focus:bg-yellow-50"
-                />
+              <label className="block text-[10px] font-bold text-black uppercase mb-1 ml-1">Partner</label>
+              <input
+                type="text"
+                value={formData.name2}
+                onChange={(e) => setFormData({ ...formData, name2: e.target.value })}
+                className="w-full px-3 py-2 bg-gray-50 border-2 border-black rounded-lg text-sm font-bold text-black outline-none focus:bg-yellow-50"
+              />
             </div>
           </div>
 
           <div>
-             <label className="block text-[10px] font-bold text-black uppercase mb-1 ml-1">Tagline</label>
-             <input
-               type="text"
-               value={formData.tagline}
-               onChange={(e) => setFormData({...formData, tagline: e.target.value})}
-               className="w-full px-3 py-2 bg-gray-50 border-2 border-black rounded-lg text-sm font-bold text-black outline-none focus:bg-yellow-50"
-             />
+            <label className="block text-[10px] font-bold text-black uppercase mb-1 ml-1">Tagline</label>
+            <input
+              type="text"
+              value={formData.tagline}
+              onChange={(e) => setFormData({ ...formData, tagline: e.target.value })}
+              className="w-full px-3 py-2 bg-gray-50 border-2 border-black rounded-lg text-sm font-bold text-black outline-none focus:bg-yellow-50"
+            />
           </div>
-          
+
+          <div>
+            <label className="block text-[10px] font-bold text-black uppercase mb-1 ml-1">Photo Shape</label>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setFormData({ ...formData, orientation: 'landscape' })}
+                className={`flex-1 py-2 px-3 border-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${formData.orientation === 'landscape' ? 'bg-black text-white border-black' : 'bg-white text-black border-gray-200 hover:border-black'}`}
+              >
+                <div className="w-5 h-3.5 border-2 border-current rounded-sm"></div>
+                Wide
+              </button>
+              <button
+                onClick={() => setFormData({ ...formData, orientation: 'portrait' })}
+                className={`flex-1 py-2 px-3 border-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${formData.orientation === 'portrait' ? 'bg-black text-white border-black' : 'bg-white text-black border-gray-200 hover:border-black'}`}
+              >
+                <div className="w-3.5 h-5 border-2 border-current rounded-sm"></div>
+                Tall
+              </button>
+            </div>
+          </div>
+
           <div className="flex items-center justify-between py-2 border-2 border-gray-100 rounded-lg px-2 mt-2">
-             <span className="text-sm font-bold text-black font-doodle">DISPLAY DATE</span>
-             <button 
-              onClick={() => setFormData({...formData, showDate: !formData.showDate})}
+            <span className="text-sm font-bold text-black font-doodle">DISPLAY DATE</span>
+            <button
+              onClick={() => setFormData({ ...formData, showDate: !formData.showDate })}
               className={`w-10 h-6 rounded-full border-2 border-black transition-colors relative ${formData.showDate ? 'bg-green-400' : 'bg-gray-200'}`}
             >
               <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white border-2 border-black rounded-full transform transition-transform ${formData.showDate ? 'translate-x-4' : 'translate-x-0'}`} />

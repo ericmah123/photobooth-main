@@ -41,11 +41,23 @@ export const compositeStrip = async (
   if (!ctx) throw new Error('Could not get canvas context');
 
   // 1. Determine Canvas Size based on Frame
-  let canvasWidth = PHOTO_WIDTH + PADDING * 2;
-  let canvasHeight = PADDING + (PHOTO_HEIGHT * 4) + (GAP * 3) + PADDING + 120; 
+  const isPortrait = settings.orientation === 'portrait';
+
+  // Base dimensions (Landscape default)
+  let pWidth = PHOTO_WIDTH;
+  let pHeight = PHOTO_HEIGHT;
+
+  // Swap for portrait
+  if (isPortrait) {
+    pWidth = PHOTO_HEIGHT; // 450
+    pHeight = PHOTO_WIDTH; // 600
+  }
+
+  let canvasWidth = pWidth + PADDING * 2;
+  let canvasHeight = PADDING + (pHeight * 4) + (GAP * 3) + PADDING + 120;
 
   if (frame === FrameType.POLAROID) {
-    canvasHeight += 100; 
+    canvasHeight += 100;
   }
 
   canvas.width = canvasWidth;
@@ -56,7 +68,7 @@ export const compositeStrip = async (
   if (frame === FrameType.RETRO) ctx.fillStyle = '#fffbe6'; // Butter cream
   if (frame === FrameType.HEARTS) ctx.fillStyle = '#fff1f2'; // Rose water
   if (frame === FrameType.FILM) ctx.fillStyle = '#1a1a1a'; // Film negative style (dark)
-  
+
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
   // 3. Apply Frame Borders (Background elements)
@@ -67,7 +79,7 @@ export const compositeStrip = async (
     ctx.roundRect(15, 15, canvasWidth - 30, canvasHeight - 30, 20);
     ctx.stroke();
   }
-  
+
   if (frame === FrameType.FILM) {
     // Draw film sprocket holes
     ctx.fillStyle = '#ffffff';
@@ -75,8 +87,8 @@ export const compositeStrip = async (
     const holeGap = 40;
     // Left side
     for (let y = 20; y < canvasHeight; y += holeGap) {
-        ctx.fillRect(10, y, holeSize, holeSize - 5);
-        ctx.fillRect(canvasWidth - 10 - holeSize, y, holeSize, holeSize - 5);
+      ctx.fillRect(10, y, holeSize, holeSize - 5);
+      ctx.fillRect(canvasWidth - 10 - holeSize, y, holeSize, holeSize - 5);
     }
   }
 
@@ -95,21 +107,21 @@ export const compositeStrip = async (
     const x = PADDING;
 
     ctx.save();
-    
+
     // Apply Filter
     if (filter === FilterType.BW) ctx.filter = 'grayscale(100%) contrast(1.1)';
     if (filter === FilterType.SKETCH) ctx.filter = 'grayscale(100%) contrast(2.0) brightness(1.1)';
     if (filter === FilterType.SOFT_PASTEL) ctx.filter = 'brightness(1.1) saturate(0.85) sepia(0.15)';
     if (filter === FilterType.WARM_ROMANTIC) ctx.filter = 'sepia(0.2) contrast(1.05) saturate(1.1)';
-    
+
     // Rounded corners for photos
     ctx.beginPath();
     ctx.roundRect(x, y, PHOTO_WIDTH, PHOTO_HEIGHT, 4);
     ctx.clip();
-    
+
     ctx.drawImage(img, x, y, PHOTO_WIDTH, PHOTO_HEIGHT);
     ctx.restore();
-    
+
     // Inner border for definition (Black for sketch)
     ctx.strokeStyle = '#000000';
     ctx.lineWidth = 4;
@@ -127,16 +139,16 @@ export const compositeStrip = async (
 
         // Placement logic
         for (let i = 0; i < 4; i++) {
-            const y = PADDING + i * (PHOTO_HEIGHT + GAP);
-            
-            // Alternate sides
-            if (i % 2 === 0) {
-                // Top Left corner
-                ctx.drawImage(stickerImg, PADDING - 20, y - 20, stickerSize, stickerSize);
-            } else {
-                // Bottom Right corner
-                ctx.drawImage(stickerImg, PADDING + PHOTO_WIDTH - 80, y + PHOTO_HEIGHT - 80, stickerSize, stickerSize);
-            }
+          const y = PADDING + i * (PHOTO_HEIGHT + GAP);
+
+          // Alternate sides
+          if (i % 2 === 0) {
+            // Top Left corner
+            ctx.drawImage(stickerImg, PADDING - 20, y - 20, stickerSize, stickerSize);
+          } else {
+            // Bottom Right corner
+            ctx.drawImage(stickerImg, PADDING + PHOTO_WIDTH - 80, y + PHOTO_HEIGHT - 80, stickerSize, stickerSize);
+          }
         }
       } catch (e) {
         console.warn("Failed to load sticker asset", e);
@@ -150,26 +162,26 @@ export const compositeStrip = async (
   ctx.textAlign = 'center';
 
   let footerY = PADDING + (PHOTO_HEIGHT * 4) + (GAP * 3) + 70;
-  
+
   // Use a handwritten-style font fallback
-  ctx.font = 'bold 42px "Gaegu", "Pacifico", cursive'; 
-  
+  ctx.font = 'bold 42px "Gaegu", "Pacifico", cursive';
+
   const titleText = `${settings.name1} & ${settings.name2} Photo Booth`;
   ctx.fillText(titleText, canvasWidth / 2, footerY);
 
   footerY += 45;
   ctx.font = 'bold 24px "Nunito", sans-serif';
   ctx.fillStyle = frame === FrameType.FILM ? '#cccccc' : '#333333';
-  
+
   const parts = [];
   if (settings.tagline) parts.push(settings.tagline);
   if (settings.showDate) {
     const dateStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     parts.push(dateStr);
   }
-  
+
   if (parts.length > 0) {
-      ctx.fillText(parts.join(' • '), canvasWidth / 2, footerY);
+    ctx.fillText(parts.join(' • '), canvasWidth / 2, footerY);
   }
 
   return canvas.toDataURL('image/jpeg', 0.95);
